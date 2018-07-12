@@ -1,0 +1,27 @@
+version: 0.0.0
+
+UID: 0x00000000
+name: capsules
+engine: docker
+storage: hub.docker.com
+secrets:
+  env: $DOCKER_TOKEN
+tags-prefix: beta
+
+process:
+  - package : ./mnist
+    name: mnist
+    version : 0.0.0
+    tag-format: $(%name %version)
+
+    build:
+      file : Dockerfile
+
+    push:
+      org: medtune
+      repo: capsules
+
+  - package: ./inception
+    
+  
+    file: mnist/Dockerfile
