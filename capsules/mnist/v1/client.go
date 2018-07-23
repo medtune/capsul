@@ -2,8 +2,10 @@ package mnist
 
 import (
 	"context"
+	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	tf_core_framework "tensorflow/core/framework"
 	pb "tensorflow_serving/apis"
 
@@ -50,10 +52,10 @@ func PredictRequest(image []float32) *pb.PredictRequest {
 	return request
 }
 
-func PredictRequestFromBytes(ib []byte) *pb.PredictRequest {
+func PredictRequestFromBytes(ib []byte) (*pb.PredictRequest, error) {
 	matb, err := gocv.IMDecode(ib, -1)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, fmt.Errorf("not an image %v", err)
 	}
 
 	//matb0 := gocv.NewMat()
@@ -70,7 +72,7 @@ func PredictRequestFromBytes(ib []byte) *pb.PredictRequest {
 		}
 	}
 	request := PredictRequest(imgfloat)
-	return request
+	return request, nil
 }
 
 func RunInference(ctx context.Context, request *pb.PredictRequest) (*pb.PredictResponse, error) {
@@ -87,17 +89,25 @@ func RunInference(ctx context.Context, request *pb.PredictRequest) (*pb.PredictR
 	return resp, nil
 }
 
-func RunInferenceOnImagePath(imgPath string) {
+func RunInferenceOnImagePath(imgPath string) (*pb.PredictResponse, error) {
 	ib, err := ioutil.ReadFile(imgPath)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, err
 	}
 
-	request := PredictRequestFromBytes(ib)
+	request, err := PredictRequestFromBytes(ib)
 
 	resp, err := RunInference(context.Background(), request)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, err
 	}
-	log.Println(resp)
+	return resp, nil
+}
+
+func main() {
+	resp, err := RunInferenceOnImagePath(os.Args[1])
+	if err != nil {
+		log.Panic(err)
+	}
+	fmt.Println(resp)
 }
