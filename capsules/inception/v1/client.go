@@ -1,13 +1,9 @@
-package main
+package inception
 
 import (
 	"context"
-	"flag"
-	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
-	"path/filepath"
 	tf_core_framework "tensorflow/core/framework"
 	pb "tensorflow_serving/apis"
 
@@ -20,25 +16,11 @@ const (
 	VERSION = "v0.0.0"
 )
 
-func main() {
-	servingAddress := flag.String("serving-address", "35.195.114.253:9000", "The tensorflow serving address")
-	flag.Parse()
+var (
+	SERVER = "localhost:9001"
+)
 
-	if flag.NArg() != 1 {
-		fmt.Println("Usage: " + os.Args[0] + " --serving-address localhost:10000 path/to/img.png")
-		os.Exit(1)
-	}
-
-	imgPath, err := filepath.Abs(flag.Arg(0))
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	imageBytes, err := ioutil.ReadFile(imgPath)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
+func PredictRequest(bt []byte) *pb.PredictRequest {
 	request := &pb.PredictRequest{
 		ModelSpec: &pb.ModelSpec{
 			Name:          "inception",
@@ -57,70 +39,95 @@ func main() {
 						},
 					},
 				},
-				StringVal: [][]byte{imageBytes},
+				StringVal: [][]byte{bt},
 			},
 		},
 	}
+	return request
+}
 
-	conn, err := grpc.Dial(*servingAddress, grpc.WithInsecure())
+func RunInference(ctx context.Context, request *pb.PredictRequest) (*pb.PredictResponse, error) {
+	conn, err := grpc.Dial(SERVER, grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("Cannot connect to the grpc server: %v\n", err)
+		return nil, err
 	}
 	defer conn.Close()
-
 	client := pb.NewPredictionServiceClient(conn)
-
-	resp, err := client.Predict(context.Background(), request)
+	resp, err := client.Predict(ctx, request)
 	if err != nil {
-		log.Fatalln(err)
+		return resp, err
+	}
+	return resp, nil
+}
+
+func RunInferenceOnImagePath(imgPath string) (*pb.PredictResponse, error) {
+	ib, err := ioutil.ReadFile(imgPath)
+	if err != nil {
+		return nil, err
 	}
 
-	log.Println(resp)
+	request := PredictRequest(ib)
+
+	resp, err := RunInference(context.Background(), request)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func main() {
+	resp, err := RunInferenceOnImagePath("ball.jpg")
+	if err != nil {
+		log.Panic(err)
+	}
+	log.Printf("resp: %v\n\n", resp)
+	log.Println(resp.Outputs["classes"].StringVal[0])
+
 }
 
 /*
+  outputs {
+	key: "classes"
+	value {
+	  dtype: DT_STRING
+	  tensor_shape {
+	  dim {
+		size: 1
+	  }
+	  dim {
+		size: 5
+	  }
+	  }
+	  string_val: "sports car, sport car"
+	  string_val: "car wheel"
+	  string_val: "racer, race car, racing car"
+	  string_val: "grille, radiator grille"
+	  string_val: "minivan"
+	}
+	}
 	outputs {
-		key: "classes"
-		value {
-		  dtype: DT_STRING
-		  tensor_shape {
-			dim {
-			  size: 1
-			}
-			dim {
-			  size: 5
-			}
-		  }
-		  string_val: "sports car, sport car"
-		  string_val: "car wheel"
-		  string_val: "racer, race car, racing car"
-		  string_val: "grille, radiator grille"
-		  string_val: "minivan"
-		}
+	key: "scores"
+	value {
+	  dtype: DT_FLOAT
+	  tensor_shape {
+	  dim {
+		size: 1
 	  }
-	  outputs {
-		key: "scores"
-		value {
-		  dtype: DT_FLOAT
-		  tensor_shape {
-			dim {
-			  size: 1
-			}
-			dim {
-			  size: 5
-			}
-		  }
-		  float_val: 9.68140888214
-		  float_val: 7.5523018837
-		  float_val: 7.47641181946
-		  float_val: 6.99047279358
-		  float_val: 6.82593536377
-		}
+	  dim {
+		size: 5
 	  }
-	  model_spec {
-		name: "inception"
-		version {
-		  value: 1
-		}
-		signature_name: "predict_images"
-	  }*/
+	  }
+	  float_val: 9.68140888214
+	  float_val: 7.5523018837
+	  float_val: 7.47641181946
+	  float_val: 6.99047279358
+	  float_val: 6.82593536377
+	}
+	}
+	model_spec {
+	name: "inception"
+	version {
+	  value: 1
+	}
+	signature_name: "predict_images"
+}*/

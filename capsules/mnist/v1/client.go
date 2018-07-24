@@ -96,6 +96,9 @@ func RunInferenceOnImagePath(imgPath string) (*pb.PredictResponse, error) {
 	}
 
 	request, err := PredictRequestFromBytes(ib)
+	if err != nil {
+		return nil, err
+	}
 
 	resp, err := RunInference(context.Background(), request)
 	if err != nil {
