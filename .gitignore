@@ -1,3 +1,6 @@
 .dev/
-*.png
-*.jpg
+
+main
+
+*.so
+*.o
