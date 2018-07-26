@@ -1,35 +1,29 @@
 package mnist
 
 import (
-	"context"
-	"fmt"
-	"io/ioutil"
-	"log"
-	"os"
 	tf_core_framework "tensorflow/core/framework"
 	pb "tensorflow_serving/apis"
 
 	google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
-	"gocv.io/x/gocv"
-
-	"google.golang.org/grpc"
 )
 
 const (
-	VERSION = "v0.0.0"
+	VERSION = "v0.0.1"
 )
 
 var (
-	SERVER = "localhost:9000"
+	ModelName     = "inception"
+	SignatureName = "predict_images"
+	ModelVersion  = 1
 )
 
 func PredictRequest(image []float32) *pb.PredictRequest {
 	request := &pb.PredictRequest{
 		ModelSpec: &pb.ModelSpec{
-			Name:          "mnist",
-			SignatureName: "predict_images",
+			Name:          ModelName,
+			SignatureName: SignatureName,
 			Version: &google_protobuf.Int64Value{
-				Value: int64(1),
+				Value: int64(ModelVersion),
 			},
 		},
 		Inputs: map[string]*tf_core_framework.TensorProto{
@@ -52,7 +46,8 @@ func PredictRequest(image []float32) *pb.PredictRequest {
 	return request
 }
 
-func PredictRequestFromBytes(ib []byte) (*pb.PredictRequest, error) {
+/*
+func PredictRequestFromBytes(image []float32) (*pb.PredictRequest, error) {
 	matb, err := gocv.IMDecode(ib, -1)
 	if err != nil {
 		return nil, fmt.Errorf("not an image %v", err)
@@ -74,6 +69,7 @@ func PredictRequestFromBytes(ib []byte) (*pb.PredictRequest, error) {
 	request := PredictRequest(imgfloat)
 	return request, nil
 }
+
 
 func RunInference(ctx context.Context, request *pb.PredictRequest) (*pb.PredictResponse, error) {
 	conn, err := grpc.Dial(SERVER, grpc.WithInsecure())
@@ -114,3 +110,5 @@ func main() {
 	}
 	fmt.Println(resp)
 }
+
+*/
