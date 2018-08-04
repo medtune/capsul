@@ -2,10 +2,13 @@ package inception
 
 import (
 	"context"
+	"io/ioutil"
+	"log"
 	tf_core_framework "tensorflow/core/framework"
 	pb "tensorflow_serving/apis"
 
 	google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+	"google.golang.org/grpc"
 )
 
 const (
@@ -51,10 +54,8 @@ func Predict(Client pb.PredictionServiceClient, ctx context.Context, request *pb
 	return resp, nil
 }
 
-/*
-
 func RunInference(ctx context.Context, request *pb.PredictRequest) (*pb.PredictResponse, error) {
-	conn, err := grpc.Dial(SERVER, grpc.WithInsecure())
+	conn, err := grpc.Dial("", grpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}
@@ -91,6 +92,7 @@ func main() {
 	log.Println(resp.Outputs["classes"].StringVal[0])
 }
 
+/*
 
   outputs {
 	key: "classes"
