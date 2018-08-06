@@ -4,7 +4,9 @@ FROM golang:1.10
 RUN apt-get update && apt update
 
 # Add project to default GOPATH
-ADD . /go/src/github.com/medtune/capsules/
+ADD . /go/src/github.com/medtune/capsules
+
+RUN ls -la /go/src/github.com/medtune/capsules
 
 # install unzip
 RUN apt install unzip -y
@@ -18,26 +20,24 @@ RUN mv protoc3/bin/* /usr/local/bin/ && \
     mv protoc3/include/* /usr/local/include/
 
 # Install golang protoc & grpc
-RUN go get -u github.com/golang/protobuf/ptypes/wrappers
-RUN go get -u google.golang.org/grpc/...
-RUN go get -u github.com/golang/protobuf/protoc-gen-go
+RUN go get github.com/golang/protobuf/ptypes/wrappers
+RUN go get google.golang.org/grpc
+RUN go get github.com/golang/protobuf/protoc-gen-go
 
 # Git clone tensorflow/tensorflow and tensorflow/serving
-RUN git clone https://github.com/tensorflow/serving.git 
-RUN git clone https://github.com/tensorflow/tensorflow.git 
+RUN git clone -b r1.7 https://github.com/tensorflow/serving.git 
+RUN git clone -b r1.7 https://github.com/tensorflow/tensorflow.git 
+
+RUN ls -la
 
 RUN ls -la /go/src
 
 # Compile proto files using gRPC plugin 
-RUN PROTOC_OPTS='-I serving --go_out=plugins=grpc:/go/src' && \
+RUN PROTOC_OPTS='-I tensorflow -I serving --go_out=plugins=grpc:src' && \
     eval "protoc $PROTOC_OPTS serving/tensorflow_serving/apis/*.proto" && \
     eval "protoc $PROTOC_OPTS serving/tensorflow_serving/config/*.proto" && \
     eval "protoc $PROTOC_OPTS serving/tensorflow_serving/util/*.proto" && \
     eval "protoc $PROTOC_OPTS serving/tensorflow_serving/sources/storage_path/*.proto" && \
-
-RUN ls -la /go/src
-
-RUN PROTOC_OPTS='-I tensorflow --go_out=plugins=grpc:/go/src' && \
     eval "protoc $PROTOC_OPTS tensorflow/tensorflow/core/framework/*.proto" && \
     eval "protoc $PROTOC_OPTS tensorflow/tensorflow/core/example/*.proto" && \
     eval "protoc $PROTOC_OPTS tensorflow/tensorflow/core/lib/core/*.proto" && \
