@@ -26,12 +26,18 @@ RUN go get -u github.com/golang/protobuf/protoc-gen-go
 RUN git clone https://github.com/tensorflow/serving.git 
 RUN git clone https://github.com/tensorflow/tensorflow.git 
 
+RUN ls -la /go/src
+
 # Compile proto files using gRPC plugin 
-RUN PROTOC_OPTS='-I tensorflow -I serving --go_out=plugins=grpc:/go/src' && \
+RUN PROTOC_OPTS='-I serving --go_out=plugins=grpc:/go/src' && \
     eval "protoc $PROTOC_OPTS serving/tensorflow_serving/apis/*.proto" && \
     eval "protoc $PROTOC_OPTS serving/tensorflow_serving/config/*.proto" && \
     eval "protoc $PROTOC_OPTS serving/tensorflow_serving/util/*.proto" && \
     eval "protoc $PROTOC_OPTS serving/tensorflow_serving/sources/storage_path/*.proto" && \
+
+RUN ls -la /go/src
+
+RUN PROTOC_OPTS='-I tensorflow --go_out=plugins=grpc:/go/src' && \
     eval "protoc $PROTOC_OPTS tensorflow/tensorflow/core/framework/*.proto" && \
     eval "protoc $PROTOC_OPTS tensorflow/tensorflow/core/example/*.proto" && \
     eval "protoc $PROTOC_OPTS tensorflow/tensorflow/core/lib/core/*.proto" && \
