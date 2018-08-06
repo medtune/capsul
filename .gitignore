@@ -4,3 +4,8 @@ main
 
 *.so
 *.o
+
+tensorflow
+serving
+tensorflow_serving
+vendor

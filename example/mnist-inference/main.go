@@ -30,7 +30,6 @@ func main() {
 
 	for i := 0; i < 28; i++ {
 		for j := 0; j < 28; j++ {
-			//fmt.Printf("value: %v %v: %v %v\n", i, j, matb.GetFloatAt(i, j), mat.GetFloatAt(i, j))
 			imgfloat = append(imgfloat, mat.GetFloatAt(i, j))
 		}
 	}
