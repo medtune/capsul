@@ -37,7 +37,6 @@ RUN export PROTOC_OPTS='-I tensorflow -I serving --go_out=plugins=grpc:vendor' &
 
 RUN ls -la
 
-RUN go get -v -u github.com/medtune/capsules/example/inception-inference
 RUN go build github.com/medtune/capsules/example/inception-inference/main.go
 
 RUN ls -la
