@@ -31,7 +31,9 @@ RUN export PROTOC_OPTS='-I tensorflow -I serving --go_out=plugins=grpc:vendor' &
     eval "protoc $PROTOC_OPTS tensorflow/tensorflow/core/framework/*.proto" && \
     eval "protoc $PROTOC_OPTS tensorflow/tensorflow/core/example/*.proto" && \
     eval "protoc $PROTOC_OPTS tensorflow/tensorflow/core/lib/core/*.proto" && echo hello && \
-    eval "protoc $PROTOC_OPTS tensorflow/tensorflow/core/protobuf/{saver,meta_graph}.proto" 
+    eval "protoc $PROTOC_OPTS tensorflow/tensorflow/core/protobuf/meta_graph.proto" && \
+    eval "protoc $PROTOC_OPTS tensorflow/tensorflow/core/protobuf/saver.proto"
+
 
 RUN ls -la
 
