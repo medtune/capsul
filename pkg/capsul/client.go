@@ -7,20 +7,40 @@ import (
 	"google.golang.org/grpc"
 )
 
+// Client wrap gRPC client
 type Client struct {
-	Address       string
-	ModelName     string
-	SignatureName string
-	Version       int64
+	Address    string
+	CachedConn *grpc.ClientConn
 }
 
+func New(address string) (*Client, error) {
+	return &Client{
+		Address: address,
+	}, nil
+}
+
+// NewPredict send a predict request to the designed server
+// using a new fresh connection and closing it later
+func (c *Client) NewPredict(ctx context.Context, request *pb.PredictRequest) (*pb.PredictResponse, error) {
+	conn, err := grpc.Dial(c.Address, grpc.WithInsecure())
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+	client := pb.NewPredictionServiceClient(conn)
+	resp, err := client.Predict(ctx, request)
+	if err != nil {
+		return resp, err
+	}
+	return resp, nil
+}
+
+// Predict method
 func (c *Client) Predict(ctx context.Context, request *pb.PredictRequest) (*pb.PredictResponse, error) {
-	conn, err := grpc.Dial(c.Address, grpc.WithInsecure())
-	if err != nil {
-		return nil, err
+	if c.CachedConn == nil {
+		c.Connect()
 	}
-	defer conn.Close()
-	client := pb.NewPredictionServiceClient(conn)
+	client := pb.NewPredictionServiceClient(c.CachedConn)
 	resp, err := client.Predict(ctx, request)
 	if err != nil {
 		return resp, err
@@ -28,20 +48,24 @@ func (c *Client) Predict(ctx context.Context, request *pb.PredictRequest) (*pb.P
 	return resp, nil
 }
 
-func (c *Client) PredictBytes(ctx context.Context, request *pb.PredictRequest) (*pb.PredictResponse, error) {
+// Connect without closing
+func (c *Client) Connect() error {
 	conn, err := grpc.Dial(c.Address, grpc.WithInsecure())
 	if err != nil {
-		return nil, err
+		return err
 	}
-	defer conn.Close()
-	client := pb.NewPredictionServiceClient(conn)
-	resp, err := client.Predict(ctx, request)
-	if err != nil {
-		return resp, err
-	}
-	return resp, nil
+	c.CachedConn = conn
+	return nil
 }
 
-func New() {
+// Close cached conn
+func (c *Client) Close() error {
+	err := c.CachedConn.Close()
+	c.CachedConn = nil
+	return err
+}
+
+// HealthCheck not implemented yet
+func (c *Client) HealthCheck(ctx context.Context) {
 
 }
