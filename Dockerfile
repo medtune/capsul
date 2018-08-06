@@ -40,3 +40,5 @@ RUN ls -la
 RUN go get -v -u github.com/medtune/capsules/example/inception-inference
 RUN go build github.com/medtune/capsules/example/inception-inference/main.go
 
+RUN ls -la
+
