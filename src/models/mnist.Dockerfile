@@ -1,1 +1,0 @@
-FROM medtune/medtune/tensorflow-serving
