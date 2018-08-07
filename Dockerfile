@@ -4,7 +4,7 @@ FROM golang:1.10
 RUN apt-get update && apt update
 
 # Add project to default GOPATH
-ADD . /go/src/github.com/medtune/capsules
+ADD . /go/src/github.com/medtune/capsul
 
 # install unzip
 RUN apt install unzip -y
@@ -42,7 +42,7 @@ RUN PROTOC_OPTS='-I tensorflow -I serving --go_out=plugins=grpc:src' && \
 #TODO: Install gocv: opencv bindings
 
 # Set work dir
-WORKDIR /go/src/github.com/medtune/capsules
+WORKDIR /go/src/github.com/medtune/capsul
 
 #RUN go install ./example/inception-inference
 #RUN go install ./example/mnist-inference/main.go

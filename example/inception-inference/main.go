@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/medtune/capsules/pkg/request/inception"
-	tfsclient "github.com/medtune/capsules/pkg/tfs-client"
+	"github.com/medtune/capsul/pkg/request/inception"
+	tfsclient "github.com/medtune/capsul/pkg/tfs-client"
 )
 
 func main() {

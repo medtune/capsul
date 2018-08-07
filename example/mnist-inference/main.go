@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/medtune/capsules/pkg/request/mnist"
-	tfsclient "github.com/medtune/capsules/pkg/tfs-client"
+	"github.com/medtune/capsul/pkg/request/mnist"
+	tfsclient "github.com/medtune/capsul/pkg/tfs-client"
 
 	"gocv.io/x/gocv"
 )

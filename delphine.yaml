@@ -1,7 +1,7 @@
 version: 0.0.0
 
 UID: 0x00000000
-name: capsules
+name: capsul
 engine: docker
 storage: hub.docker.com
 secrets:
@@ -19,7 +19,7 @@ process:
 
     push:
       org: medtune
-      repo: capsules
+      repo: capsul
 
   - package: ./inception
     file: mnist/Dockerfile

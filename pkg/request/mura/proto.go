@@ -5,7 +5,7 @@ import (
 	pb "tensorflow_serving/apis"
 
 	google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
-	"github.com/medtune/capsules/pkg/request"
+	"github.com/medtune/capsul/pkg/request"
 )
 
 var (

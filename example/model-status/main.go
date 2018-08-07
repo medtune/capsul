@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/medtune/capsules/pkg/request"
-	"github.com/medtune/capsules/pkg/request/inception"
-	tfsclient "github.com/medtune/capsules/pkg/tfs-client"
+	"github.com/medtune/capsul/pkg/request"
+	"github.com/medtune/capsul/pkg/request/inception"
+	tfsclient "github.com/medtune/capsul/pkg/tfs-client"
 )
 
 func main() {
