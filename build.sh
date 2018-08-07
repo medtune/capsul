@@ -6,7 +6,9 @@
 apt-get update
 apt update
 # unzip
-apt install unzip -y
+apt install -y unzip 
+#curl
+apt install -y curl
 
 # protoc 3.6.1 
 curl -OL https://github.com/google/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip
