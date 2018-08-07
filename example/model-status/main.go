@@ -3,28 +3,23 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 
+	"github.com/medtune/capsules/pkg/request"
 	"github.com/medtune/capsules/pkg/request/inception"
 	tfsclient "github.com/medtune/capsules/pkg/tfs-client"
 )
 
 func main() {
-	// Read image file
-	b, err := ioutil.ReadFile("testdata/inception_cheetah.jpeg")
-	if err != nil {
-		panic(err)
-	}
-
-	// Connection to tf server
+	// Connect to client
 	client, err := tfsclient.New("localhost:9001")
 	if err != nil {
 		panic(err)
 	}
+
 	ctx := context.Background()
 
-	// Run prediction
-	resp, err := client.Predict(ctx, inception.Default(b))
+	// Ask for inception model status
+	resp, err := client.Status(ctx, request.Status(inception.Model, 1))
 	if err != nil {
 		panic(err)
 	}

@@ -44,7 +44,5 @@ RUN PROTOC_OPTS='-I tensorflow -I serving --go_out=plugins=grpc:src' && \
 # Set work dir
 WORKDIR /go/src/github.com/medtune/capsules
 
-RUN ls -la
-
-RUN go install ./example/inception-inference
+#RUN go install ./example/inception-inference
 #RUN go install ./example/mnist-inference/main.go

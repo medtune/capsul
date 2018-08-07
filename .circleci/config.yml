@@ -5,4 +5,15 @@ jobs:
    steps:
      - checkout
 
-     - run: docker build -t medtune/capsul:latest .
+     - run: 
+        name: build capsul image
+        command: docker build -t medtune/capsul:dev-v0.1.0 .
+
+     - run: 
+        name: login docker engine
+        command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+
+     - run:
+        name: push image to registry
+        command: docker push medtune/capsul:dev-v0.1.0
+
