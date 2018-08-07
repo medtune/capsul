@@ -7,7 +7,8 @@ import (
 	google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
 )
 
-func NewPredict(model, signature string, version int, inputData map[string]*tf_core_framework.TensorProto) *pb.PredictRequest {
+// Predict request
+func Predict(model, signature string, version int, inputData map[string]*tf_core_framework.TensorProto) *pb.PredictRequest {
 	return &pb.PredictRequest{
 		ModelSpec: &pb.ModelSpec{
 			Name:          model,
@@ -17,5 +18,17 @@ func NewPredict(model, signature string, version int, inputData map[string]*tf_c
 			},
 		},
 		Inputs: inputData,
+	}
+}
+
+// GetStatus request
+func Status(model string, version int) *pb.GetModelStatusRequest {
+	return &pb.GetModelStatusRequest{
+		ModelSpec: &pb.ModelSpec{
+			Name: model,
+			Version: &google_protobuf.Int64Value{
+				Value: int64(version),
+			},
+		},
 	}
 }

@@ -5,6 +5,7 @@ import (
 	pb "tensorflow_serving/apis"
 
 	google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+	"github.com/medtune/capsul/pkg/request"
 )
 
 var (
@@ -79,4 +80,9 @@ func Default(imageF32 []float32) *pb.PredictRequest {
 			},
 		},
 	}
+}
+
+// Status request
+func Status() *pb.GetModelStatusRequest {
+	return request.Status(Model, Version)
 }

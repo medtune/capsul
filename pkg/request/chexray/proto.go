@@ -1,19 +1,22 @@
-package mura
+package chexray
 
 import (
 	tf_core_framework "tensorflow/core/framework"
 	pb "tensorflow_serving/apis"
 
 	google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+	"github.com/medtune/capsul/pkg/request"
 )
 
 var (
 	// Model name
-	Model = "mura"
+	Model = "chexray"
 	// Signature name
 	Signature = "predict_images"
 	// Version int
 	Version = 1
+
+	GraphWeights = "gs://medtune/weights/prod/chexray"
 )
 
 // SetSpecs .
@@ -73,4 +76,9 @@ func Default(imageBytes []byte) *pb.PredictRequest {
 			},
 		},
 	}
+}
+
+// Status request
+func Status() *pb.GetModelStatusRequest {
+	return request.Status(Model, Version)
 }

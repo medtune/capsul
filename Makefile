@@ -1,9 +1,5 @@
-dep:
-	
+install:
 
+build-image:
+	docker build -t medtune/capsul .
 
-build-examples:
-
-
-build:
-	
