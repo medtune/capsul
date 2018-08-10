@@ -1,2 +1,2 @@
-FROM medtune/tensorflow-serving
+FROM medtune/tensorflow-serving:bazel-cpu
 
