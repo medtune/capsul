@@ -1,3 +1,11 @@
 .dev/
-*.png
-*.jpg
+
+main
+
+*.so
+*.o
+
+tensorflow
+serving
+tensorflow_serving
+vendor
