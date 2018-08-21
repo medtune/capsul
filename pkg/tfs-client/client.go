@@ -8,6 +8,10 @@ import (
 	"google.golang.org/grpc"
 )
 
+// Compile time check
+
+var _ TFSClient = &Client{}
+
 // Client wrap gRPC client
 type Client struct {
 	Address    string
@@ -41,7 +45,7 @@ func newInsecureConnection(addr string) (*grpc.ClientConn, error) {
 	return grpc.Dial(addr, grpc.WithInsecure())
 }
 
-// Close cached conn
+// Close cached connection
 func (c *Client) Close() error {
 	return c.Connection.Close()
 }
@@ -52,8 +56,13 @@ func (c *Client) Predict(ctx context.Context, request *pb.PredictRequest) (*pb.P
 	return client.Predict(ctx, request)
 }
 
-// GetStatus return model version status
+// Status return model version status
 func (c *Client) Status(ctx context.Context, request *pb.GetModelStatusRequest) (*pb.GetModelStatusResponse, error) {
 	client := pb.NewModelServiceClient(c.Connection)
 	return client.GetModelStatus(ctx, request)
+}
+
+// Cam method
+func (c *Client) Cam(ctx context.Context, request *pb.PredictRequest) (*pb.PredictResponse, error) {
+	return nil, fmt.Errorf("grad cam calculation isn't implemented in grpc clients")
 }
