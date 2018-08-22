@@ -16,6 +16,7 @@ const (
 	statusEP  = "/status"
 )
 
+// Compile check
 var _ TFSClient = &RestClient{}
 
 // RestClient .
@@ -32,7 +33,7 @@ func Custom(address string, timeout int) (*RestClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	// Client
+	// Create client
 	client := &RestClient{
 		Address: addr.String(),
 		Client: &http.Client{
