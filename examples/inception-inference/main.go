@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"time"
 
 	"github.com/medtune/capsul/pkg/request/inception"
 	tfsclient "github.com/medtune/capsul/pkg/tfs-client"
@@ -11,7 +12,7 @@ import (
 
 func main() {
 	// Read image file
-	b, err := ioutil.ReadFile("testdata/inception_cheetah.jpeg")
+	b, err := ioutil.ReadFile("test/testdata/inception_cheetah.jpeg")
 	if err != nil {
 		panic(err)
 	}
@@ -21,7 +22,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	ctx := context.Background()
+
+	// timeout context
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	// Run prediction
 	resp, err := client.Predict(ctx, inception.Default(b))

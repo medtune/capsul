@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"log"
+	"time"
 
 	"github.com/medtune/capsul/pkg/request/mnist"
 	tfsclient "github.com/medtune/capsul/pkg/tfs-client"
@@ -13,7 +15,7 @@ import (
 
 func main() {
 	// Read file
-	b, err := ioutil.ReadFile("1.png")
+	b, err := ioutil.ReadFile("test/testdata/mnist_1.png")
 	if err != nil {
 		panic(err)
 	}
@@ -44,12 +46,13 @@ func main() {
 		}
 	}
 
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	// run prediction
 	resp, err := client.Predict(ctx, mnist.Default(imgfloat))
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	fmt.Println(resp)
 }
