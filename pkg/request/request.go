@@ -21,7 +21,7 @@ func Predict(model, signature string, version int, inputData map[string]*tf_core
 	}
 }
 
-// GetStatus request
+// Status request
 func Status(model string, version int) *pb.GetModelStatusRequest {
 	return &pb.GetModelStatusRequest{
 		ModelSpec: &pb.ModelSpec{
@@ -31,4 +31,14 @@ func Status(model string, version int) *pb.GetModelStatusRequest {
 			},
 		},
 	}
+}
+
+type ModelSpec struct {
+	Name      string
+	Signature string
+	Version   int64
+}
+
+type ModelRequestMaker struct {
+	ModelSpec ModelSpec
 }

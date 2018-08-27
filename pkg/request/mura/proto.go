@@ -10,7 +10,7 @@ import (
 
 var (
 	// Model name
-	Model = "mura"
+	Model = "mura_inception_resnet_v2"
 	// Signature name
 	Signature = "predict_images"
 	// Version int
@@ -36,14 +36,7 @@ func New(model, signature string, version int, imageBytes []byte) *pb.PredictReq
 		},
 		Inputs: map[string]*tf_core_framework.TensorProto{
 			"images": &tf_core_framework.TensorProto{
-				Dtype: tf_core_framework.DataType_DT_STRING,
-				TensorShape: &tf_core_framework.TensorShapeProto{
-					Dim: []*tf_core_framework.TensorShapeProto_Dim{
-						&tf_core_framework.TensorShapeProto_Dim{
-							Size: int64(1),
-						},
-					},
-				},
+				Dtype:     tf_core_framework.DataType_DT_STRING,
 				StringVal: [][]byte{imageBytes},
 			},
 		},
@@ -62,14 +55,7 @@ func Default(imageBytes []byte) *pb.PredictRequest {
 		},
 		Inputs: map[string]*tf_core_framework.TensorProto{
 			"images": &tf_core_framework.TensorProto{
-				Dtype: tf_core_framework.DataType_DT_STRING,
-				TensorShape: &tf_core_framework.TensorShapeProto{
-					Dim: []*tf_core_framework.TensorShapeProto_Dim{
-						&tf_core_framework.TensorShapeProto_Dim{
-							Size: int64(1),
-						},
-					},
-				},
+				Dtype:     tf_core_framework.DataType_DT_STRING,
 				StringVal: [][]byte{imageBytes},
 			},
 		},

@@ -7,13 +7,15 @@ import (
 )
 
 func main() {
-	cli, err := tfsclient.Custom("localhost:8005/api", 1)
+	cli, err := tfsclient.NewRest("localhost:8005/api", 5)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	resp, err := cli.Get(cli.Address)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	log.Println(resp)
 }
