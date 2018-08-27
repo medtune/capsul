@@ -25,14 +25,15 @@ type RestClient struct {
 	Address string
 }
 
-// Custom .
-func Custom(address string, timeout int) (*RestClient, error) {
-	tt := time.Duration(timeout) * time.Second
-
+// NewRest .
+func NewRest(address string, timeout int) (*RestClient, error) {
 	addr, err := url.Parse("http://" + address)
 	if err != nil {
 		return nil, err
 	}
+
+	tt := time.Duration(timeout) * time.Second
+
 	// Create client
 	client := &RestClient{
 		Address: addr.String(),

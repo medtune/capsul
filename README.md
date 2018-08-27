@@ -5,7 +5,7 @@
 ## Build status
 
 | branch | Build status |
-| --- | --- | 
+| --- | --- |
 | Master | [![CircleCI](https://circleci.com/gh/medtune/capsul/tree/master.svg?style=svg)](https://circleci.com/gh/medtune/capsul/tree/master) |
 | Dev | [![CircleCI](https://circleci.com/gh/medtune/capsul/tree/dev.svg?style=svg)](https://circleci.com/gh/medtune/capsul/tree/dev) |
 

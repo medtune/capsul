@@ -1,11 +1,21 @@
 .dev/
 
+# compiled cmd
 main
+capsul
+capsul-cmd
 
+# bins
 *.so
 *.o
 
+# tensorflow pacakges
 tensorflow
 serving
 tensorflow_serving
 vendor
+
+#virtual env
+venv/
+
+# python artefacts
