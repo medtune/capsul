@@ -7,7 +7,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/medtune/capsul/pkg/request/mnist"
+	"github.com/medtune/capsul/pkg/pbreq"
+	"github.com/medtune/capsul/pkg/pbreq/stdimpl"
 	tfsclient "github.com/medtune/capsul/pkg/tfs-client"
 
 	"gocv.io/x/gocv"
@@ -49,8 +50,12 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
+	// Prediction Request:
+	meta := stdimpl.Mnist
+	req := pbreq.PredictF32(meta, imgfloat)
+
 	// run prediction
-	resp, err := client.Predict(ctx, mnist.Default(imgfloat))
+	resp, err := client.Predict(ctx, req)
 	if err != nil {
 		log.Fatal(err)
 	}

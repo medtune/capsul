@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
 
-	"github.com/medtune/capsul/pkg/request"
-	"github.com/medtune/capsul/pkg/request/mura"
+	"github.com/medtune/capsul/pkg/pbreq"
+	"github.com/medtune/capsul/pkg/pbreq/stdimpl"
 	tfsclient "github.com/medtune/capsul/pkg/tfs-client"
 )
 
@@ -16,10 +17,16 @@ func main() {
 		panic(err)
 	}
 
-	ctx := context.Background()
+	// Prediction Request:
+	meta := stdimpl.MuraMNV2
+	req := pbreq.Status(meta)
+
+	// Context with timeout 5seconds
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	// Ask for inception model status
-	resp, err := client.Status(ctx, request.Status(mura.Model, 1))
+	resp, err := client.Status(ctx, req)
 	if err != nil {
 		panic(err)
 	}

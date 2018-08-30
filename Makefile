@@ -85,6 +85,13 @@ build-mura-irn-v2:
 		-f build/capsules/mura_irn_v2.Dockerfile \
 		.
 
+# Build mura mobilenet v2 tf server image
+build-mura-mn-v2:
+	@echo building model capsul mura mobilenet v2 ...
+	docker build \
+		-t medtune/capsul:mura-mn-v2 \
+		-f build/capsules/mura_mobilenet_v2.Dockerfile \
+		.
 
 # build mura main image
 build-mura: build-mura-irn-v2

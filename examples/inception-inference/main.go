@@ -6,7 +6,8 @@ import (
 	"io/ioutil"
 	"time"
 
-	"github.com/medtune/capsul/pkg/request/inception"
+	"github.com/medtune/capsul/pkg/pbreq"
+	"github.com/medtune/capsul/pkg/pbreq/stdimpl"
 	tfsclient "github.com/medtune/capsul/pkg/tfs-client"
 )
 
@@ -27,10 +28,15 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
+	// Prediction Request:
+	meta := stdimpl.Inception
+	req := pbreq.Predict(meta, b)
+
 	// Run prediction
-	resp, err := client.Predict(ctx, inception.Default(b))
+	resp, err := client.Predict(ctx, req)
 	if err != nil {
 		panic(err)
 	}
+
 	fmt.Println(resp)
 }
