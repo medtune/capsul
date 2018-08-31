@@ -4,13 +4,12 @@ FROM golang:1.10
 RUN apt-get update && apt update
 
 # Add project to default GOPATH
-ADD cmd /go/src/github.com/medtune/capsul
-ADD pkg /go/src/github.com/medtune/capsul
-ADD hack /go/src/github.com/medtune/capsul
-ADD plugins /go/src/github.com/medtune/capsul
-ADD csflask /go/src/github.com/medtune/capsul
-ADD examples /go/src/github.com/medtune/capsul
-
+ADD cmd /go/src/github.com/medtune/capsul/cmd
+ADD pkg /go/src/github.com/medtune/capsul/pkg
+ADD hack /go/src/github.com/medtune/capsul/hack
+ADD plugins /go/src/github.com/medtune/capsul/plugins
+ADD csflask /go/src/github.com/medtune/capsul/csflask
+ADD examples /go/src/github.com/medtune/capsul/examples
 
 # install unzip
 RUN apt install unzip -y
