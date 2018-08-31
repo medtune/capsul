@@ -5,8 +5,14 @@ main
 capsul
 capsul-cmd
 
-
+# exported model
 weights/
+
+# before exporting models weights
+weights-bexp/
+
+# github.com/tensorflow/models repo --depth=1
+models/
 
 # bins
 *.so

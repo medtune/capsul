@@ -24,6 +24,10 @@ clean:
 	rm -f $(BINARY_NAME)
 
 
+test-clean:
+	rm -f test/testdata/*_cam.png
+
+
 # build base container image 
 # does not compile binaries
 build-base:
@@ -85,6 +89,7 @@ build-mura-irn-v2:
 		-f build/capsules/mura_irn_v2.Dockerfile \
 		.
 
+
 # Build mura mobilenet v2 tf server image
 build-mura-mn-v2:
 	@echo building model capsul mura mobilenet v2 ...
@@ -93,19 +98,26 @@ build-mura-mn-v2:
 		-f build/capsules/mura_mobilenet_v2.Dockerfile \
 		.
 
+
+# Build mura mobile net grad cam customized server
+build-mura-mn-v2-cam:
+	@echo building grad cam server for mura mobilenet v2
+	docker build \
+		-t medtune/capsul:mura-mn-v2-cam \
+		-f build/csflask/mura_mn_v2_cam.Dockerfile \
+		.
+
+
 # build mura main image
-build-mura: build-mura-irn-v2
-	@echo taging mura-irn-v2 with mura
-	docker tag medtune/capsul:mura-irn-v2 medtune/capsul:mura
+build-mura: build-mura-mn-v2
+	@echo taging mura-mn-v2 with mura
+	docker tag medtune/capsul:mura-mn-v2 medtune/capsul:mura
 
 
 # Build mura 
-build-mura-cam:
+build-mura-cam: build-mura-mn-v2-cam
 	@echo building model capsul mura-cam ...
-	docker build \
-		-t medtune/capsul:mura-cam \
-		-f build/capsules/mura-cam.Dockerfile \
-		.
+	docker tag medtune/capsul:mura-mn-v2-cam medtune/capsul:mura-cam
 
 
 # Build chexray
