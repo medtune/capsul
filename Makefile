@@ -34,7 +34,7 @@ build-base:
 	@echo building base capsul library ...
 	docker build \
 		-t medtune/capsul:base \
-		-f Dockerfile \
+		-f build/base.Dockerfile \
 		.
 
 

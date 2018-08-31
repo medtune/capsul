@@ -8,7 +8,7 @@ jobs:
  
       - run: 
           name: build capsul image
-          command: make capsul base
+          command: make capsul
 
       - run: 
           name: login docker engine
