@@ -5,18 +5,21 @@ RUN apt-get update && apt update
 
 # Add project to default GOPATH
 ADD cmd /go/src/github.com/medtune/capsul/cmd
+ADD csflask /go/src/github.com/medtune/capsul/csflask
 ADD pkg /go/src/github.com/medtune/capsul/pkg
 ADD hack /go/src/github.com/medtune/capsul/hack
 ADD plugins /go/src/github.com/medtune/capsul/plugins
-ADD csflask /go/src/github.com/medtune/capsul/csflask
 ADD examples /go/src/github.com/medtune/capsul/examples
+ADD test /go/src/github.com/medtune/capsul/test
 
 # install unzip
 RUN apt install unzip -y
 
 # Download protoc binaries
-RUN curl -OL https://github.com/google/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip && \
-    unzip ./protoc-3.6.1-linux-x86_64.zip -d protoc3
+RUN curl -OL https://github.com/google/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip
+
+# unzip
+RUN unzip ./protoc-3.6.1-linux-x86_64.zip -d protoc3
 
 # Move protoc binaries
 RUN mv protoc3/bin/* /usr/local/bin/ && \
@@ -29,8 +32,15 @@ RUN go get github.com/golang/protobuf/protoc-gen-go
 
 # Git clone tensorflow/tensorflow and tensorflow/serving version 1.7 
 #NOTE: earlier version (>1.7) fail to compile ?
-RUN git clone -b r1.7 https://github.com/tensorflow/serving.git 
-RUN git clone -b r1.7 https://github.com/tensorflow/tensorflow.git 
+RUN git clone \
+    --depth 1 \
+    -b r1.7 \
+    https://github.com/tensorflow/serving.git 
+
+RUN git clone \
+    --depth 1 \
+     -b r1.7 \
+     https://github.com/tensorflow/tensorflow.git 
 
 # Compile proto files using gRPC plugin 
 RUN PROTOC_OPTS='-I tensorflow -I serving --go_out=plugins=grpc:src' && \

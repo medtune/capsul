@@ -7,11 +7,11 @@ import (
 	"log"
 	"time"
 
+	"gocv.io/x/gocv"
+
 	"github.com/medtune/capsul/pkg/pbreq"
 	"github.com/medtune/capsul/pkg/pbreq/stdimpl"
 	tfsclient "github.com/medtune/capsul/pkg/tfs-client"
-
-	"gocv.io/x/gocv"
 )
 
 func main() {

@@ -127,3 +127,12 @@ build-chexray:
 		-t medtune/capsul:chexray \
 		-f build/capsules/chexray.Dockerfile \
 		.
+
+
+build-csflask: build-mura-mn-v2-cam
+
+
+build-capsules: build-mnist \
+	build-inception \
+	build-mura-mn-v2 \
+	build-mura-irn-v2

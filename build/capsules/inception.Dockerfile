@@ -10,7 +10,9 @@ RUN bazel-bin/tensorflow_serving/example/inception_saved_model \
   --checkpoint_dir=inception-v3 \
   --output_dir=/models/inception
 
+EXPOSE 10010
+
 ENTRYPOINT [ "bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server", \
-    "--port=9001", \
+    "--port=10010", \
     "--model_name=inception", \
     "--model_base_path=/models/inception"]

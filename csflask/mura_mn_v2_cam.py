@@ -22,6 +22,9 @@ from flask import (
     jsonify,
 )
 
+DATASET = "MURA v1.1"
+MODEL = "mobilenet v2"
+
 flags = tf.app.flags
 
 # Data flags
@@ -30,7 +33,7 @@ flags.DEFINE_string('checkpoint', 'model-115001', 'checkpoint file')
 flags.DEFINE_string('data_path', 'data', 'data directory path')
 
 # Server flags
-flags.DEFINE_integer('port', 8002, 'flask listen port')
+flags.DEFINE_integer('port', 11020, 'flask listen port')
 flags.DEFINE_boolean('debug', False, 'debug flask server')
 FLAGS = flags.FLAGS
 
@@ -85,75 +88,99 @@ def run_cam_on_image(graph, src, out):
     cv2.imwrite(out, np.uint8(255*new_img))
     sess.close()
 
+# Flask app
+app = Flask(__name__)
+
 # send json response
 def sendJSON(obj):
     return make_response(jsonify(obj))
 
-# Flask app
-app = Flask(__name__)
-
-@app.route('/run', methods=["POST"])
-def mura_cam():
+@app.route('/cam', methods=["POST"])
+def run_mura_cam():
     try:
         target = request.json.get('target')
-        dest = request.json.get('dest')
+        dest = request.json.get('destination')
+        force = request.json.get('force')
+        destTemp = dest
+        targetTemp = target
 
-        if dest == None or dest == '':
+        # if destination is not given
+        # output target + model signature . ext
+        # image_0.png -> image_0_mn_v2_cam.png
+        if (dest is None) or (dest == ''):
             elm = target.split('.')
-            dest = elm[0] + '_cam.' + elm[1]
+            dest = elm[0] + '_mn_v2_cam.' + elm[1]
+            destTemp = dest
 
         target = os.path.join(base_path, target)
         dest = os.path.join(base_path, dest)
+
+        if os.path.exists(dest):
+            if force:
+                os.remove(dest)
+            else:
+                return sendJSON({
+                    'success' : False,
+                    'errors' : [
+                        'destination already exist: ' + str(destTemp),
+                    ],
+                }), 200
 
         run_cam_on_image(MainGraph, target, dest)
 
         return sendJSON({
             'success' : True,
-            'target' : target,
-            'dest' : dest,
+            'target' : targetTemp,
+            'destination' : destTemp,
         }), 200
 
     except Exception as e:
         return sendJSON({
             'success' : False,
             'errors' : [repr(e)],
+            'target' : targetTemp,
+            'destination' : destTemp,
         }), 200
-
-    return sendJSON({
-        'success' : False,
-        'errors' : ["spaghetti error"],
-    }), 200
 
 @app.route('/status', methods=["GET"])
 def mura_status():
     return sendJSON({
         'success': True,
-        'status' : 'READY',
+        'status' : 'AVAILABLE',
+        'version' : 1,
         'pwd' : os.getcwd(),
         'base_path' : base_path,
         'checkpoint' : checkpoint_file,
         'flask_debug' : FLAGS.debug,
         'flask_port' : FLAGS.port,
+        'dataset': DATASET,
+        'model' : MODEL,
     }), 200
 
 @app.route('/list', methods=["GET"])
 def get_available_data():
-    files = []
-    for fname in os.listdir(base_path):
-        path = os.path.join(base_path, fname)
-        if os.path.isdir(path):
-            continue
-        files += [path]
+    try:
+        files = []
+        for fname in os.listdir(base_path):
+            path = os.path.join(base_path, fname)
+            if os.path.isdir(path):
+                continue
+            files += [path]
 
-    return sendJSON({
-        'success' : True,
-        'files' : files,
-    })
+        return sendJSON({
+            'success' : True,
+            'files' : files,
+        })
+    except Exception as e:
+        return sendJSON({
+            'success' : False,
+            'errors' : [repr(e)],
+        }), 200
 
 if __name__ == "__main__":
     # Run server
     app.run(
-        host='0.0.0.0', 
+        host='0.0.0.0',
         port=FLAGS.port,
         debug=FLAGS.debug,
     )

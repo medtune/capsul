@@ -33,7 +33,7 @@ var (
 	}
 
 	// Chexray .
-	Chexray = &pbreq.Meta{
+	ChexrayMNV2 = &pbreq.Meta{
 		Name:      "chexray",
 		Signature: "predict_images",
 		Version:   1,
@@ -41,10 +41,10 @@ var (
 
 	// Map .
 	Map = map[string]*pbreq.Meta{
-		"mnist":       Mnist,
-		"inception":   Inception,
-		"mura-irn-v2": MuraIRNV2,
-		"mura-mn-v2":  MuraMNV2,
-		"chexray":     Chexray,
+		"mnist":         Mnist,
+		"inception":     Inception,
+		"mura-irn-v2":   MuraIRNV2,
+		"mura-mn-v2":    MuraMNV2,
+		"chexray-mn-v2": ChexrayMNV2,
 	}
 )

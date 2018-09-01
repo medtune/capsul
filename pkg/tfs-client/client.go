@@ -63,6 +63,6 @@ func (c *Client) Status(ctx context.Context, request *pb.GetModelStatusRequest) 
 }
 
 // Cam method
-func (c *Client) Cam(ctx context.Context, request *pb.PredictRequest) (*pb.PredictResponse, error) {
+func (c *Client) Cam(context.Context, *CamRequest) (*CamResponse, error) {
 	return nil, fmt.Errorf("grad cam calculation isn't implemented in grpc clients")
 }
