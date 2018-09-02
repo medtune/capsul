@@ -16,5 +16,8 @@ jobs:
 
       - run:
           name: push image to registry
-          command: docker push medtune/capsul:v0.0.2
+          command: |
+            docker push medtune/capsul:v0.0.2
+            docker push medtune/capsul:latest
+
 
