@@ -8,7 +8,7 @@ jobs:
  
       - run: 
           name: build capsul image
-          command: docker build -t medtune/capsul:dev-v0.0.1 .
+          command: make capsul
 
       - run: 
           name: login docker engine
@@ -16,5 +16,8 @@ jobs:
 
       - run:
           name: push image to registry
-          command: docker push medtune/capsul:dev-v0.0.1
+          command: |
+            docker push medtune/capsul:v0.0.2
+            docker push medtune/capsul:latest
+
 
