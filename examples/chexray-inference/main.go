@@ -3,48 +3,92 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
-	"image/png"
 	"io/ioutil"
+	"log"
+	"net/http"
 	"time"
 
-	"github.com/anthonynsimon/bild/transform"
 	"github.com/medtune/capsul/pkg/pbreq"
 	"github.com/medtune/capsul/pkg/pbreq/stdimpl"
 	tfsclient "github.com/medtune/capsul/pkg/tfs-client"
-	"gocv.io/x/gocv"
 )
 
-// Convert images bytes to float32 array
-// Need gocv
-func bytesToFloat32(ib []byte) ([]float32, error) {
-	im, _ := png.Decode(bytes.NewReader(ib))
-	im = transform.Resize(im, 224, 224, transform.Linear)
-	m, _ := gocv.ImageToMatRGB(im)
-	mat := gocv.NewMat()
-	m.ConvertTo(&mat, gocv.MatTypeCV32F)
+type responsePP struct {
+	Success bool   `json:"success"`
+	Target  string `json:"target"`
+	Out     string `json:"out"`
+}
 
-	imgfloat := make([]float32, 0, 0)
-	for i := 0; i < 224; i++ {
-		for j := 0; j < 224; j++ {
-			a, b, c, alpha := im.At(i, j).RGBA()
-			var alp = float32(alpha)
-			imgfloat = append(imgfloat,
-				(float32(a)/alp-0.229)/0.485,
-				(float32(b)/alp-0.224)/0.456,
-				(float32(c)/alp-0.225)/0.406)
-		}
+type imageData struct {
+	data []float64
+}
+
+type requestPP struct {
+	Target string `json:"target"`
+}
+
+func getFloatList(file string) (*responsePP, error) {
+	url := "http://localhost:12030/process"
+
+	jsonStr, err := json.Marshal(&requestPP{file})
+	if err != nil {
+		return nil, err
 	}
-	fmt.Println(len(imgfloat))
-	return imgfloat, nil
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	r, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer r.Body.Close()
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	t := responsePP{}
+	err = json.Unmarshal(body, &t)
+	if err != nil {
+		return nil, err
+	}
+
+	return &t, nil
 }
 
 func main() {
+	start := time.Now()
 	// Read image file
-	b, err := ioutil.ReadFile("/Volumes/IAL-CLOUD/Chest-X-Ray/00000013_040.png")
+	r, err := getFloatList("00000013_040.png")
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
+
+	var data [][][][][]float32
+	err = json.Unmarshal([]byte(r.Out), &data)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	var onelist []float32
+	d := data[0][0]
+
+	for _, i := range d {
+		for _, j := range i {
+			onelist = append(onelist, j[0], j[1], j[2])
+		}
+	}
+
+	fmt.Println(len(onelist))
 
 	// Connection to tf server
 	client, err := tfsclient.New("localhost:10031")
@@ -58,8 +102,7 @@ func main() {
 
 	// Prediction Request:
 	meta := stdimpl.ChexrayDN121
-	f, _ := bytesToFloat32(b)
-	req := pbreq.PredictFTest(meta, f)
+	req := pbreq.PredictFTest(meta, onelist)
 
 	// Run prediction
 	resp, err := client.Predict(ctx, req)
@@ -72,4 +115,5 @@ func main() {
 	for _, i := range l {
 		fmt.Printf("%.2f  ", i*float32(100))
 	}
+	fmt.Println(time.Since(start))
 }
