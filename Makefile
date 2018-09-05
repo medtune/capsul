@@ -1,7 +1,6 @@
 CONTAINER_ENGINE=docker
 CAPSUL_VERSION=0.0.2
 CAPSUL_CMD_VERSION=0.0.1
-MAINTAINERS=AEB MAHs
 
 GOCMD=go
 GOVERSION=$(GOCMD) version
@@ -121,18 +120,28 @@ build-mura-cam: build-mura-mn-v2-cam
 
 
 # Build chexray
-build-chexray:
-	@echo building model capsul chexray ...
+build-chexray-dn-121:
+	@echo building model capsul chexray densenet 121 ...
 	docker build \
-		-t medtune/capsul:chexray \
-		-f build/capsules/chexray.Dockerfile \
+		-t medtune/capsul:chexray-dn-121 \
+		-f build/capsules/chexray_densenet_121.Dockerfile \
 		.
 
+# Build chexray
+build-chexray-pp:
+	docker build \
+		-t medtune/capsul:chexray-pp-helper \
+		-f build/csflask/chexray_pp.Dockerfile \
+		.
 
-build-csflask: build-mura-mn-v2-cam
+# Build csflask
+build-csflask: build-mura-mn-v2-cam \
+	build-chexray-pp
 
-
+# Build capsules
 build-capsules: build-mnist \
 	build-inception \
 	build-mura-mn-v2 \
-	build-mura-irn-v2
+	build-mura-mn-v2_cam \
+	build-mura-irn-v2  \
+	build-chexray-dn-121 \
