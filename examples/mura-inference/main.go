@@ -19,7 +19,7 @@ func main() {
 	}
 
 	// Connection to tf server
-	client, err := tfsclient.New("localhost:9005")
+	client, err := tfsclient.New("localhost:10021")
 	if err != nil {
 		panic(err)
 	}
@@ -29,7 +29,7 @@ func main() {
 	defer cancel()
 
 	// Prediction Request:
-	meta := stdimpl.MuraMNV2
+	meta := stdimpl.MuraIRNV2
 	req := pbreq.Predict(meta, b)
 
 	// Run prediction

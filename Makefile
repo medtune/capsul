@@ -135,13 +135,30 @@ build-mura-cam: build-mura-mn-v2-cam
 	docker tag medtune/capsul:mura-mn-v2-cam medtune/capsul:mura-cam
 
 
-# Build chexray
+# Build chexray mobilenet v2
+build-chexray-mn-v2:
+	docker build \
+		-t medtune/capsul:chexray-mn-v2 \
+		-f build/capsules/chexray_mobilenet_v2.Dockerfile \
+		.
+
+
+# Build chexray mobilenet v2 grad cam
+build-chexray-mn-v2-cam:
+	docker build \
+		-t medtune/capsul:chexray-mn-v2 \
+		-f build/csflask/chexray_mobilenet_v2_cam.Dockerfile \
+		.
+
+
+# Build chexray densenet 121
 build-chexray-dn-121:
 	@echo building model capsul chexray densenet 121 ...
 	docker build \
 		-t medtune/capsul:chexray-dn-121 \
 		-f build/capsules/chexray_densenet_121.Dockerfile \
 		.
+
 
 # Build chexray
 build-chexray-pp:
@@ -150,9 +167,12 @@ build-chexray-pp:
 		-f build/csflask/chexray_pp.Dockerfile \
 		.
 
+
 # Build csflask
 build-csflask: build-mura-mn-v2-cam \
 	build-chexray-pp \
+	build-chexray-mn-v2-cam
+
 
 # Build capsules
 build-capsules: build-mnist \
@@ -161,4 +181,5 @@ build-capsules: build-mnist \
 	build-mura-mn-v2-cam \
 	build-mura-irn-v2 \
 	build-chexray-dn-121 \
-	build-chexray-pp
+	build-chexray-mn-v2
+

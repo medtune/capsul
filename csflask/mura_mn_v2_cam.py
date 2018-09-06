@@ -63,7 +63,7 @@ with MainGraph.as_default():
     images_bis = tf.expand_dims(image_a,0)
     with slim.arg_scope(mobilenet_v2.training_scope(is_training=False)):
         #TODO: Check mobilenet_v1 module, var "excluding
-        logits, end_points = mobilenet_v2.mobilenet(images,depth_multiplier=1.4, num_classes = 2)
+        logits, end_points = mobilenet_v2.mobilenet(images_bis,depth_multiplier=1.4, num_classes = 2)
     variables = slim.get_variables_to_restore()
     init_fn=slim.assign_from_checkpoint_fn(checkpoint_file, variables)
     embedding = end_points["layer_18/output"][0]

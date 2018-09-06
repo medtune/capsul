@@ -68,7 +68,7 @@ func getFloatList(file string) (*responsePP, error) {
 func main() {
 	start := time.Now()
 	// Read image file
-	r, err := getFloatList("00000013_040.png")
+	r, err := getFloatList("00000003_002.png")
 	if err != nil {
 		log.Fatalln(err)
 	}
