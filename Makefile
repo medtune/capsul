@@ -57,7 +57,7 @@ build-base:
 capsul: build-base
 	docker tag medtune/capsul:base medtune/capsul:$(VERSION)
 	docker tag medtune/capsul:base medtune/capsul:latest
-
+	
 
 # alias capsul
 capsul-base: capsul
