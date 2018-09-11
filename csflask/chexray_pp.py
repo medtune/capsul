@@ -90,6 +90,7 @@ def process_image():
     except Exception as e:
         return sendJSON({
             'success' : False,
+            'target' : targetTemp,
             'errors' : [repr(e)],
         }), 200
 

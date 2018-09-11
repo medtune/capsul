@@ -57,7 +57,7 @@ build-base:
 capsul: build-base
 	docker tag medtune/capsul:base medtune/capsul:$(VERSION)
 	docker tag medtune/capsul:base medtune/capsul:latest
-	
+
 
 # alias capsul
 capsul-base: capsul
@@ -170,16 +170,11 @@ build-chexray-pp:
 
 # Build csflask
 build-csflask: build-mura-mn-v2-cam \
-	build-chexray-pp \
-	build-chexray-mn-v2-cam
-
+	build-chexray-pp 
 
 # Build capsules
 build-capsules: build-mnist \
 	build-inception \
 	build-mura-mn-v2 \
-	build-mura-mn-v2-cam \
 	build-mura-irn-v2 \
-	build-chexray-dn-121 \
-	build-chexray-mn-v2
-
+	build-chexray-dn-121
