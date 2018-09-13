@@ -1,4 +1,4 @@
-FROM golang:1.10
+FROM golang:1.11
 
 # Update system (ubuntu)
 RUN apt-get update && apt update

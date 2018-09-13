@@ -39,12 +39,21 @@ var (
 		Version:   1,
 	}
 
+	// Chexray .
+	ChexrayDN121 = &pbreq.Meta{
+		Name:      "chexray_densenet_121",
+		Signature: "predict",
+		Version:   1,
+		UseDims:   true,
+	}
+
 	// Map .
 	Map = map[string]*pbreq.Meta{
-		"mnist":         Mnist,
-		"inception":     Inception,
-		"mura-irn-v2":   MuraIRNV2,
-		"mura-mn-v2":    MuraMNV2,
-		"chexray-mn-v2": ChexrayMNV2,
+		"mnist":          Mnist,
+		"inception":      Inception,
+		"mura-irn-v2":    MuraIRNV2,
+		"mura-mn-v2":     MuraMNV2,
+		"chexray-mn-v2":  ChexrayMNV2,
+		"chexray-dn-121": ChexrayDN121,
 	}
 )

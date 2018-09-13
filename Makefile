@@ -1,7 +1,25 @@
+PROJECT=beta-platform
+OS_TYPE=$(shell uname -a)
+BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
+GITCOMMIT=$(shell git rev-parse HEAD)
+BUILDDATE=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
+MAJOR=0
+MINOR=0
+PATCH=3
+REVISION=alpha
+VERSION=v$(MAJOR).$(MINOR).$(PATCH)
+GOVERSION=1.11
+LONGVERSION=v$(MAJOR).$(MINOR).$(PATCH)-$(REVISION)
+CWD=$(shell pwd)
+VPATH=github.com/medtune/capsul/pkg
+PROJECTPATH=$(CWD)
+AUTHORS=Hilaly.Mohammed-Amine/El.bouchti.Alaa
+OWNERS=$(AUTHORS)
+LICENSETYPE=Apache-v2.0
+LICENSEURL=https://raw.githubusercontent.com/medtune/capsul/master/LICENSE.txt
+
+
 CONTAINER_ENGINE=docker
-CAPSUL_VERSION=0.0.2
-CAPSUL_CMD_VERSION=0.0.1
-MAINTAINERS=AEB MAHs
 
 GOCMD=go
 GOVERSION=$(GOCMD) version
@@ -9,9 +27,6 @@ GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
-
-BINARY_FILE=cmd/main.go
-BINARY_NAME=capsul
 
 build: 
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_NAME) -v $(BINARY_FILE)
@@ -40,7 +55,7 @@ build-base:
 
 # build capsul package and tag version/latest
 capsul: build-base
-	docker tag medtune/capsul:base medtune/capsul:v0.0.2
+	docker tag medtune/capsul:base medtune/capsul:$(VERSION)
 	docker tag medtune/capsul:base medtune/capsul:latest
 
 
@@ -59,7 +74,7 @@ build-cmd:
 
 # build capsul cmd & tag version/latest
 capsul-cmd: build-cmd
-	docker tag medtune/capsul:cmd medtune/capsul:cmd-v0.0.2
+	docker tag medtune/capsul:cmd medtune/capsul:cmd-$(VERSION)
 	docker tag medtune/capsul:cmd medtune/capsul:cmd-latest
 
 
@@ -120,19 +135,46 @@ build-mura-cam: build-mura-mn-v2-cam
 	docker tag medtune/capsul:mura-mn-v2-cam medtune/capsul:mura-cam
 
 
-# Build chexray
-build-chexray:
-	@echo building model capsul chexray ...
+# Build chexray mobilenet v2
+build-chexray-mn-v2:
 	docker build \
-		-t medtune/capsul:chexray \
-		-f build/capsules/chexray.Dockerfile \
+		-t medtune/capsul:chexray-mn-v2 \
+		-f build/capsules/chexray_mobilenet_v2.Dockerfile \
 		.
 
 
-build-csflask: build-mura-mn-v2-cam
+# Build chexray mobilenet v2 grad cam
+build-chexray-mn-v2-cam:
+	docker build \
+		-t medtune/capsul:chexray-mn-v2 \
+		-f build/csflask/chexray_mobilenet_v2_cam.Dockerfile \
+		.
 
 
+# Build chexray densenet 121
+build-chexray-dn-121:
+	@echo building model capsul chexray densenet 121 ...
+	docker build \
+		-t medtune/capsul:chexray-dn-121 \
+		-f build/capsules/chexray_densenet_121.Dockerfile \
+		.
+
+
+# Build chexray
+build-chexray-pp:
+	docker build \
+		-t medtune/capsul:chexray-pp-helper \
+		-f build/csflask/chexray_pp.Dockerfile \
+		.
+
+
+# Build csflask
+build-csflask: build-mura-mn-v2-cam \
+	build-chexray-pp 
+
+# Build capsules
 build-capsules: build-mnist \
 	build-inception \
 	build-mura-mn-v2 \
-	build-mura-irn-v2
+	build-mura-irn-v2 \
+	build-chexray-dn-121

@@ -86,3 +86,43 @@ func Status(m *Meta) *pb.GetModelStatusRequest {
 		},
 	}
 }
+
+// Predict .
+func PredictFTest(m *Meta, images []float32) *pb.PredictRequest {
+	r := &pb.PredictRequest{
+		ModelSpec: &pb.ModelSpec{
+			Name:          m.Name,
+			SignatureName: m.Signature,
+			Version: &google_protobuf.Int64Value{
+				Value: m.Version,
+			},
+		},
+		Inputs: map[string]*tf_core_framework.TensorProto{
+			"images": &tf_core_framework.TensorProto{
+				Dtype:    tf_core_framework.DataType_DT_FLOAT,
+				FloatVal: images,
+			},
+		},
+	}
+
+	if m.UseDims {
+		r.Inputs["images"].TensorShape = &tf_core_framework.TensorShapeProto{
+			Dim: []*tf_core_framework.TensorShapeProto_Dim{
+				&tf_core_framework.TensorShapeProto_Dim{
+					Size: int64(1),
+				},
+				&tf_core_framework.TensorShapeProto_Dim{
+					Size: int64(224),
+				},
+				&tf_core_framework.TensorShapeProto_Dim{
+					Size: int64(224),
+				},
+				&tf_core_framework.TensorShapeProto_Dim{
+					Size: int64(3),
+				},
+			},
+		}
+	}
+
+	return r
+}
