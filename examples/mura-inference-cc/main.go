@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"log"
+	"sync"
 	"time"
 
 	"github.com/medtune/capsul/pkg/pbreq"
@@ -18,28 +20,27 @@ func main() {
 		panic(err)
 	}
 
-	// Connection to tf server
-	client, err := tfsclient.New("35.242.219.80:10020")
-	if err != nil {
-		panic(err)
-	}
-
 	// Context with timeout 5seconds
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
 	// Prediction Request:
 	meta := stdimpl.MuraMNV2
 	req := pbreq.Predict(meta, b)
 
-	start := time.Now()
-	// Run prediction
-	resp, err := client.Predict(ctx, req)
-	if err != nil {
-		panic(err)
+	var wg sync.WaitGroup
+	for i := 0; i <= 3; i++ {
+		wg.Add(1)
+		go func() {
+			client, _ := tfsclient.New("35.242.219.80:10020")
+			start := time.Now()
+			// Run prediction
+			_, err := client.Predict(ctx, req)
+			log.Println(time.Since(start), err)
+			wg.Done()
+		}()
 	}
 
-	fmt.Println(time.Since(start))
-
-	fmt.Println(resp)
+	wg.Wait()
+	fmt.Println("done")
 }
